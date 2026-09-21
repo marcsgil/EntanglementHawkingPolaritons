@@ -26,11 +26,15 @@ export dispersion, loss, potential, pump, nonlinearity, position_noise_func
 include("correlations.jl")
 export update_correlations!
 
+include("g2.jl")
+export position_g2_minus_one, momentum_g2_minus_one
+
 include("tracing.jl")
 
 include("polariton_funcs.jl")
 
 include("plot_funcs.jl")
 export plot_velocities, plot_density, plot_bistability, plot_dispersion, plot_window_pair, plot_all_windows
+export plot_position_g2_minus_one, plot_momentum_g2_minus_one
 
 end

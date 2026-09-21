@@ -188,3 +188,91 @@ function plot_all_windows(saving_dir; kwargs...)
     end
     nothing
 end
+
+function plot_position_g2_minus_one(
+    saving_dir;
+    power=5,
+    colorrange=(-6, 6),
+    colormap=:inferno,
+    xlims=(-150, 150),
+    ylims=xlims,
+    fontsize=24,
+    filename="g2_position.pdf",
+    savefig=true,
+)
+    statistics = read_statistics(saving_dir)
+    _, param, _ = read_steady_state(saving_dir)
+    positions = StepRangeLen(0, param.dx, param.N) .- param.x_def
+    g2m1 = position_g2_minus_one(statistics, param.dx)
+
+    return with_theme(theme_latexfonts()) do
+        fig = Figure(; size=(600, 450), fontsize)
+        ax = Axis(
+            fig[1, 1];
+            aspect=DataAspect(),
+            xlabel=L"x \ (\mu \text{m})",
+            ylabel=L"x' \ (\mu \text{m})",
+        )
+        !isnothing(xlims) && xlims!(ax, xlims...)
+        !isnothing(ylims) && ylims!(ax, ylims...)
+        hm = heatmap!(
+            ax,
+            positions,
+            positions,
+            g2m1 .* 10^power;
+            colorrange,
+            colormap,
+        )
+        Colorbar(fig[1, 2], hm; label=L"g_2(x, x') - 1 \ (\times 10^{-%$power})")
+        savefig && save(joinpath(saving_dir, filename), fig)
+        fig
+    end
+end
+
+function plot_momentum_g2_minus_one(
+    saving_dir,
+    window_index::Integer;
+    power=3,
+    colorrange=(-2, 2),
+    colormap=:inferno,
+    xlims=nothing,
+    ylims=nothing,
+    show_pump_wavenumbers=true,
+    fontsize=24,
+    filename="g2_momentum_$window_index.pdf",
+    savefig=true,
+)
+    statistics = read_statistics(saving_dir)
+    _, param, _ = read_steady_state(saving_dir)
+    window_pair = read_window_pairs(saving_dir)[window_index]
+    first_momenta = fftshift(fftfreq(length(window_pair.first), 2π / param.dx))
+    second_momenta = fftshift(fftfreq(length(window_pair.second), 2π / param.dx))
+    g2m1 = fftshift(momentum_g2_minus_one(statistics, window_pair, param.dx))
+
+    return with_theme(theme_latexfonts()) do
+        fig = Figure(; size=(600, 450), fontsize)
+        ax = Axis(
+            fig[1, 1];
+            aspect=DataAspect(),
+            xlabel=L"k \ (\mu \text{m}^{-1})",
+            ylabel=L"k' \ (\mu \text{m}^{-1})",
+        )
+        !isnothing(xlims) && xlims!(ax, xlims...)
+        !isnothing(ylims) && ylims!(ax, ylims...)
+        hm = heatmap!(
+            ax,
+            first_momenta,
+            second_momenta,
+            g2m1 .* 10^power;
+            colorrange,
+            colormap,
+        )
+        if show_pump_wavenumbers
+            vlines!(ax, param.k_down; color=:black, linestyle=:dashdot)
+            hlines!(ax, param.k_up; color=:black, linestyle=:dashdot)
+        end
+        Colorbar(fig[1, 2], hm; label=L"g_2(k, k') - 1 \ (\times 10^{-%$power})")
+        savefig && save(joinpath(saving_dir, filename), fig)
+        fig
+    end
+end

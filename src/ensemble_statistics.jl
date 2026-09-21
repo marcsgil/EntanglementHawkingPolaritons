@@ -103,7 +103,10 @@ function batch_statistics!(
     compiled::CompiledObservables,
     samples::A,
 ) where {A<:AbstractMatrix}
-    evaluated = Dict{ObservableTransform,A}()
+    # `samples` may be a view of a saved solution while compiled transforms
+    # own independent matrix workspaces, so their concrete matrix types need
+    # not match.
+    evaluated = Dict{ObservableTransform,AbstractMatrix}()
     for (observable, destination) in batch.mean
         values = evaluate!(compiled.transforms[observable], samples)
         evaluated[observable] = values

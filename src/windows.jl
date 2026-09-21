@@ -30,7 +30,7 @@ end
 Base.length(spec::WindowSpec) = spec.length
 
 selected_idxs(spec::WindowSpec) =
-    spec.first_idx:(spec.first_idx + spec.length - 1)
+    spec.first_idx:(spec.first_idx+spec.length-1)
 
 position2idx(position, positions) =
     argmin(index -> abs(positions[index] - position), eachindex(positions))
@@ -41,18 +41,26 @@ function check_window_bounds(spec::WindowSpec, source_length)
     return nothing
 end
 
-function hann(N, ::Type{T}) where {T}
-    return [T(sinpi(n / N)^2) for n in 0:(N - 1)]
-end
+hann(n, N) = sinpi((n-1) / N)^2
+
 
 """Materialize a window specification using the storage backend of `prototype`."""
-materialize_window(spec::WindowSpec, prototype::AbstractArray) =
-    materialize_window(spec.kind, length(spec), prototype)
+get_window_weights(spec::WindowSpec, type=Vector{Float64}) =
+    get_window_weights(spec.kind, length(spec), type)
 
-function materialize_window(::Hann, N, prototype::AbstractArray)
+get_window_weights(spec::WindowSpec, prototype::AbstractArray) =
+    get_window_weights(spec.kind, length(spec), prototype)
+
+function get_window_weights(::Hann, N, ::Type{T}=Vector{Float64}) where {T<:AbstractArray}
+    weights = T(undef, N)
+    map!(n->hann(n, N), weights, eachindex(weights))
+    return weights
+end
+
+function get_window_weights(::Hann, N, prototype::AbstractArray)
     T = typeof(real(zero(eltype(prototype))))
     weights = similar(prototype, T, N)
-    copyto!(weights, hann(N, T))
+    map!(n -> hann(n, N), weights, eachindex(weights))
     return weights
 end
 

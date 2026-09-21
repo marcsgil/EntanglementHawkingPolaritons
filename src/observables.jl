@@ -94,7 +94,7 @@ function compile_transform(
 )
     check_window_bounds(transform.window, length(field_prototype))
     output = batch_workspace(field_prototype, length(transform.window), batchsize)
-    weights = materialize_window(transform.window, field_prototype)
+    weights = get_window_weights(transform.window, field_prototype)
     plan = plan_fft!(output, 1)
     return CompiledWindowedFourierField(transform.window, weights, output, plan)
 end
@@ -106,7 +106,7 @@ function compile_transform(
 )
     check_window_bounds(transform.window, length(field_prototype))
     output = batch_workspace(field_prototype, length(transform.window), batchsize)
-    weights = materialize_window(transform.window, field_prototype)
+    weights = get_window_weights(transform.window, field_prototype)
     plan = plan_fft!(output, 1)
     return CompiledWindowedFourierDensity(transform.window, weights, output, plan)
 end

@@ -2,7 +2,7 @@
 
 julia_version = "1.13.0"
 manifest_format = "2.1"
-project_hash = "5fbcb0ae58da80244073ddd12ded551b719d7c4e"
+project_hash = "9bbe0a80aa97c9e64a8a6d382542e9bdede4975d"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -559,7 +559,7 @@ uuid = "5ae413db-bbd1-5e63-b57d-d24a61df00f5"
 version = "2.2.4+0"
 
 [[deps.EntanglementHawkingPolaritons]]
-deps = ["CUDA", "CairoMakie", "DSP", "FFTW", "ForwardDiff", "GeneralizedGrossPitaevskii", "Interpolations", "JLD2", "KernelAbstractions", "LinearAlgebra", "Polynomials", "ProgressMeter", "Roots", "StaticArrays", "Statistics"]
+deps = ["CUDA", "CairoMakie", "DSP", "Dates", "FFTW", "ForwardDiff", "GeneralizedGrossPitaevskii", "Interpolations", "JLD2", "KernelAbstractions", "LinearAlgebra", "Logging", "Polynomials", "ProgressMeter", "Random", "Roots", "StaticArrays", "Statistics"]
 path = "."
 uuid = "c37f442b-c5f5-457b-90db-bb647839dfe7"
 version = "0.1.0"

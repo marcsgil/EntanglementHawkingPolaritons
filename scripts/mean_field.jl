@@ -1,29 +1,29 @@
 using GeneralizedGrossPitaevskii, EntanglementHawkingPolaritons, CairoMakie
 
 # Space parameters
-L = 1024.0 |> Float32
+L = 1024f0
 lengths = (L,)
 N = 512
 dx = L / N
 xs = StepRangeLen(0, dx, N)
 
 # Polariton parameters
-ħ = 0.6582  |> Float32 #meV.ps
-γ = 0.047 / ħ  |> Float32
-m = 1 / 6  |> Float32 # meV.ps^2/μm^2; This is 3×10^-5 the electron mass
-g = 3e-4 / ħ  |> Float32
-δ₀ = 0.49 / ħ  |> Float32
+ħ = 0.6582f0 #meV.ps
+γ = 0.047f0 / ħ
+m = 1f0 / 6 # meV.ps^2/μm^2; This is 3×10^-5 the electron mass
+g = 3f-4 / ħ
+δ₀ = 0.49f0 / ħ
 
 # Potential parameters
-V_damp = 4.5 / ħ  |> Float32
-w_damp = 20.0  |> Float32
-x_def = L / 2  |> Float32
-V_def = 0.85 / ħ  |> Float32
-w_def = 0.75  |> Float32
+V_damp = 4.5f0 / ħ
+w_damp = 20f0
+x_def = L / 2
+V_def = 0.85f0 / ħ
+w_def = 0.75f0
 
 # Pump parameters
-k_up = 0.148  |> Float32
-k_down = 0.614  |> Float32
+k_up = 0.148f0
+k_down = 0.614f0
 
 divide = x_def - 7
 
@@ -33,16 +33,16 @@ divide = x_def - 7
 F_sonic_up = γ * √(δ_up / g) / 2
 F_sonic_down = γ * √(δ_down / g) / 2
 
-F_up = F_sonic_up + 0.01 |> Float32
-F_down = F_sonic_down + 0.4 |> Float32
-F_max = 20  |> Float32
+F_up = F_sonic_up + 1f-2
+F_down = F_sonic_down + 4f-1
+F_max = 20f0
 
-w_pump = 20  |> Float32
+w_pump = 20f0
 
-decay_time = 50.0  |> Float32
-extra_intensity = 6.0  |> Float32
+decay_time = 50f0
+extra_intensity = 6f0
 
-dt = 2.0e-1  |> Float32
+dt = 2.0f-1
 nsaves = 512
 
 # Full parameter tuple
@@ -55,7 +55,7 @@ param = (;
 
 u0 = (zeros(complex(typeof(L)), N),)
 prob = GrossPitaevskiiProblem(u0, lengths; dispersion, potential, nonlinearity, pump, param)
-tspan = (0, 400.0  |> Float32)
+tspan = (0, 400f0)
 alg = StrangSplitting()
 ts, sol = solve(prob, alg, tspan; dt, nsaves);
 steady_state = map(x -> x[:, end], sol)

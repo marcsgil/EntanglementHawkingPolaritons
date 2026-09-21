@@ -1,3 +1,4 @@
 .vscode
 data
-scratchspace
+scratchspace.jl
+log.txt

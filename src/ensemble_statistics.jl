@@ -76,7 +76,7 @@ function initialize_statistics(
 end
 
 
-function update_correlation!(destination, values_1, values_2, anomalous)
+function update_correlation!(destination::AbstractArray{T}, values_1, values_2, anomalous) where {T}
     tB = anomalous ? 'T' : 'C'
     mul!(
         destination,
@@ -84,7 +84,7 @@ function update_correlation!(destination, values_1, values_2, anomalous)
         tB,
         values_1,
         values_2,
-        inv(size(values_1, 2)),
+        T(inv(size(values_1, 2))),
         false,
     )
     return destination
@@ -142,9 +142,9 @@ function write_δ!(μ_batch, μ_accumulated)
 end
 
 """Merge a batch mean using a precomputed mean difference `δμ`."""
-function accumulate_mean!(μ_accumulated, δμ, num_samples, batchsize)
+function accumulate_mean!(μ_accumulated::AbstractArray{T}, δμ, num_samples, batchsize) where {T}
     N = num_samples + batchsize
-    α = batchsize / N
+    α = T(batchsize / N)
     @. μ_accumulated += α * δμ
     return μ_accumulated
 end
@@ -154,18 +154,18 @@ Merge normalized population correlations. Normal correlations use
 `δμ1 * δμ2'`; anomalous correlations use `δμ1 * transpose(δμ2)`.
 """
 function accumulate_correlation!(
-    C_accumulated,
+    C_accumulated::AbstractArray{T},
     C_batch,
     δμ1,
     δμ2,
     num_samples,
     batchsize,
     anomalous,
-)
+) where {T}
     N = num_samples + batchsize
-    α_old = num_samples / N
-    α_batch = batchsize / N
-    α_cross = α_old * α_batch
+    α_old = T(num_samples / N)
+    α_batch = T(batchsize / N)
+    α_cross = T(α_old * α_batch)
 
     @. C_accumulated = α_old * C_accumulated + α_batch * C_batch
 

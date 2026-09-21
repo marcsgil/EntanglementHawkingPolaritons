@@ -3,7 +3,7 @@ using CUDA, Dates, EntanglementHawkingPolaritons
 # Editable run settings.
 saving_dir = "data/test"
 batchsize = 10^4
-nbatches = 10
+nbatches = 90
 backend = CuArray
 show_progress = isinteractive()
 max_datetime = typemax(DateTime) # e.g. DateTime(2026, 9, 22, 8)
